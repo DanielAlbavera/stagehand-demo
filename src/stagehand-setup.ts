@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { test } from "node:test";
-import assert from "node:assert";
 
 import { Stagehand } from "@browserbasehq/stagehand";
 
@@ -16,11 +15,35 @@ test("Testing Stagehand Scope", async () => {
   await stagehand.init();
 
   const [page] = stagehand.context.pages();
-  await page.goto("https://playwright.dev/");
+  await page.goto("https://the-internet.herokuapp.com/login");
 
-  await stagehand.act('click on "GET STARTED" button');
-  const { extraction } = await stagehand.extract('Get the text inside of the "h1" label');
-  assert.strictEqual(extraction, "Installation");
+  await page.waitForSelector('#username');
 
+
+  await page.act({
+    action: "Type %username% in the Username field",
+    variables: {
+      username: "tomsmith"
+       },
+  });
+
+  await page.act("Type SuperSecretPassword! in the password field");
+
+  // Use observe() to plan an action before doing it
+  const [action] = await page.observe(
+    "Click in the Log In button",
+  );
+  await page.waitForTimeout(1_000);
+  await page.act(action); 
+  stagehand.log({
+    category: "create-browser-app",
+    message: `Metrics`,
+    auxiliary: {
+      metrics: {
+        value: JSON.stringify(stagehand.metrics),
+        type: "object",
+      },
+    },
+  });
   await stagehand.close();
 });
