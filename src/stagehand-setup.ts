@@ -10,7 +10,7 @@ import { Stagehand } from "@browserbasehq/stagehand";
 test("Testing Stagehand Scope", async () => {
   const stagehand = new Stagehand({
     env: "LOCAL",
-    model: "" // provider/model - Example: openia/gpt-5
+    model: "ollama/deepseek-v3.1:671b-cloud" // provider/model - Example: openia/gpt-5
   });
 
   await stagehand.init();
