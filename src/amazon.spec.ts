@@ -13,6 +13,7 @@ const productSchema = z.object({
   price: z.number(),
   rate: z.number(),
 });
+
 const notFoundProduct = {
   name: 'Not Found',
   price: 0,
@@ -42,15 +43,12 @@ test("Stagehand Workshop Challenge", async () => {
       "Get information of the first product",
       productSchema.default(notFoundProduct),
     );
-    console.log('First Product', firstProduct);
 
     await stagehand.act("Click on the first product");
     const currentProduct = await stagehand.extract(
       'Get product information',
       productSchema.default(notFoundProduct),
     );
-    console.log('First Product', currentProduct);
-
     assert.deepEqual(firstProduct, currentProduct);
 
     await stagehand.act('Click on "Add to Cart" Button');
@@ -60,15 +58,12 @@ test("Stagehand Workshop Challenge", async () => {
       "Get subtotal items, example: 'Subtotal (1 item)'",
       z.object({ count: z.number().default(0) }),
     );
-    console.log('Cart Count', productsInCart);
-
     assert.equal(productsInCart.count, 1);
 
     const cartProduct = await stagehand.extract(
       "Get information of the product in cart",
       productSchema.default(notFoundProduct),
     );
-    console.log('Product In Cart:', cartProduct);
 
     assert.equal(cartProduct.name, firstProduct.name);
   } finally {
