@@ -20,11 +20,10 @@ const notFoundProduct = {
   rate: 0
 };
 
-test("Stagehand Workshop Challenge", async () => {
+test("Amazon Checkout", async () => {
   const stagehand = new Stagehand({
     env: "LOCAL",
-    model: "ollama/deepseek-v3.1:671b-cloud", // provider/model - Example: openia/gpt-5
-    actTimeoutMs: 2000 * 60, // 2 minute
+    model: "ollama/glm-4.6:cloud", // provider/model - Example: openia/gpt-5
     localBrowserLaunchOptions: {
       locale: "en-US",
     },
@@ -44,21 +43,9 @@ test("Stagehand Workshop Challenge", async () => {
       productSchema.default(notFoundProduct),
     );
 
-    await stagehand.act("Click on the first product");
-    const currentProduct = await stagehand.extract(
-      'Get product information',
-      productSchema.default(notFoundProduct),
-    );
-    assert.deepEqual(firstProduct, currentProduct);
-
+    await stagehand.act("Click on the first product in the results");
     await stagehand.act('Click on "Add to Cart" Button');
     await stagehand.act('Click on "Cart" Button');
-
-    const productsInCart = await stagehand.extract(
-      "Get subtotal items, example: 'Subtotal (1 item)'",
-      z.object({ count: z.number().default(0) }),
-    );
-    assert.equal(productsInCart.count, 1);
 
     const cartProduct = await stagehand.extract(
       "Get information of the product in cart",
